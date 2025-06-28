@@ -1,9 +1,9 @@
 body {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; /* Стандартный шрифт Twitch */
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #18181B; /* Тёмный фон, как на Twitch */
-    color: #FFFFFF; /* Белый текст */
+    background-color: #18181B;
+    color: #FFFFFF;
 }
 
 .container {
@@ -13,35 +13,65 @@ body {
     padding: 10px;
 }
 
+.login-register {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.login-register input {
+    margin-bottom: 10px;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #333;
+    background-color: #222;
+    color: #fff;
+}
+
+.login-register button {
+    padding: 8px 15px;
+    border-radius: 5px;
+    background-color: #555;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+.chat-area {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
 .chat-messages {
     flex-grow: 1;
     overflow-y: auto;
     padding: 10px;
-    /* Убрал фон, так как фон body уже тёмный */
 }
 
 .chat-messages p {
     margin-bottom: 5px;
     padding: 5px 8px;
-    border-radius: 3px; /* Менее округлые углы, как на Twitch */
-    display: block; /* Отображение каждого сообщения на новой строке */
+    border-radius: 3px;
+    display: block;
     clear: both;
     word-break: break-word;
-    font-size: 14px; /* Размер шрифта, как на Twitch */
+    font-size: 14px;
 }
 
 .chat-messages .username {
-    font-weight: bold; /* Жирный шрифт для имени пользователя */
-    color: #9147FF; /* Фиолетовый цвет имени пользователя, как на Twitch */
+    font-weight: bold;
+    color: #9147FF;
     margin-right: 5px;
 }
 
 .input-area {
     display: flex;
     padding: 5px;
-    background-color: #28282B; /* Более тёмный фон для поля ввода */
+    background-color: #28282B;
     border-radius: 5px;
-    border: 1px solid #3B3B3F; /* Обводка вокруг поля ввода */
+    border: 1px solid #3B3B3F;
 }
 
 .input-area input {
@@ -50,21 +80,21 @@ body {
     border: none;
     border-radius: 3px;
     margin-right: 10px;
-    background-color: #121214; /* Очень тёмный фон для поля ввода */
-    color: #FFFFFF; /* Белый цвет текста в поле ввода */
+    background-color: #121214;
+    color: #FFFFFF;
 }
 
 .input-area input::placeholder {
-    color: #8D8D8F; /* Цвет placeholder, как на Twitch */
+    color: #8D8D8F;
 }
 
 .input-area button {
     padding: 8px 15px;
-    background-color: #9147FF; /* Фиолетовая кнопка, как на Twitch */
+    background-color: #9147FF;
     color: white;
     border: none;
     border-radius: 3px;
     cursor: pointer;
-    font-weight: bold; /* Жирный шрифт на кнопке */
-    text-transform: uppercase; /* Все буквы заглавные на кнопке */
+    font-weight: bold;
+    text-transform: uppercase;
 }
