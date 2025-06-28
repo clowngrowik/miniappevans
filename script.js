@@ -1,75 +1,95 @@
 const telegram = window.Telegram.WebApp;
 telegram.ready();
 
-const chatMessages = document.getElementById("chat-messages");
-const messageInput = document.getElementById("message-input");
-const sendButton = document.getElementById("send-button");
+const socket = io('http://localhost:3000'); // Replace with your server address
+let username = null;
 
-let username = ""; // Переменная для хранения имени пользователя
+// Login/Register Elements
+const loginRegisterDiv = document.getElementById('login-register');
+const chatAreaDiv = document.getElementById('chat-area');
+const usernameInput = document.getElementById('username');
+const passwordInput = document.getElementById('password');
+const registerBtn = document.getElementById('register-btn');
+const loginBtn = document.getElementById('login-btn');
 
-// Массив для хранения сообщений (локально)
-let messages = [];
+// Chat Elements
+const chatMessagesDiv = document.getElementById('chat-messages');
+const messageInput = document.getElementById('message-input');
+const sendButton = document.getElementById('send-button');
 
-// Функция для отображения сообщений
-function displayMessages() {
-    chatMessages.innerHTML = ""; // Очищаем контейнер
+// Event Listeners for Login/Register
+registerBtn.addEventListener('click', () => {
+  socket.emit('register', { username: usernameInput.value, password: passwordInput.value });
+});
 
-    messages.forEach(message => {
-        const messageElement = document.createElement("p");
-        const usernameSpan = document.createElement("span");
-        usernameSpan.classList.add("username");
-        usernameSpan.textContent = message.username + ":";
+loginBtn.addEventListener('click', () => {
+  socket.emit('login', { username: usernameInput.value, password: passwordInput.value });
+});
 
-        messageElement.appendChild(usernameSpan);
-        messageElement.append(" " + message.text)
+// Socket Event Listeners
+socket.on('connect', () => {
+    console.log('Connected to server');
+});
 
-        if (message.username === username) {
-            messageElement.classList.add("user-message");
-        } else {
-            messageElement.classList.add("other-message");
-        }
+socket.on('registerSuccess', (message) => {
+    console.log(message);
+    alert('Registration Successful. You can now log in.'); // Replace with better UI
+});
 
-        chatMessages.appendChild(messageElement);
+socket.on('registerError', (error) => {
+    console.error(error);
+    alert('Registration Failed: ' + error); // Replace with better UI
+});
 
-        // Прокручиваем вниз
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    });
+socket.on('loginSuccess', (data) => {
+    console.log('Login success', data);
+    username = data.user.username; // Store username
+    loginRegisterDiv.style.display = 'none'; // Hide login form
+    chatAreaDiv.style.display = 'flex'; // Show chat area
+
+    // Fetch previous messages after login success
+    //loadPreviousMessages(); // Call function to load messages after login
+});
+
+// Listen for previous messages
+socket.on('loadMessages', (messages) => {
+    messages.forEach(message => displayNewMessage(message));
+});
+
+socket.on('loginError', (error) => {
+    console.error(error);
+    alert('Login Failed: ' + error); // Replace with better UI
+});
+
+// Function to append the message to chat window
+function displayNewMessage(message) {
+    const messageElement = document.createElement("p");
+    const usernameSpan = document.createElement("span");
+    usernameSpan.classList.add("username");
+    usernameSpan.textContent = message.username + ":";
+
+    messageElement.appendChild(usernameSpan);
+    messageElement.append(" " + message.text);
+
+    chatMessagesDiv.appendChild(messageElement);
+    chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
 }
 
-// Получаем имя пользователя из Telegram Web App API
-if (telegram.initDataUnsafe && telegram.initDataUnsafe.user) {
-    username = telegram.initDataUnsafe.user.username || "Неизвестный"; // Используем имя пользователя или "Неизвестный"
-    console.log("Имя пользователя:", username); // Проверяем, что имя пользователя получено
-} else {
-    username = "Аноним";
-    console.warn("Не удалось получить имя пользователя из Telegram Web App API.  Убедитесь, что бот запрашивает данные пользователя.");
-}
+socket.on('chat message', (message) => {
+    displayNewMessage(message);
+});
 
-
-sendButton.addEventListener("click", () => {
-    const messageText = messageInput.value.trim(); // Получаем текст сообщения
-
-    if (messageText !== "") {
-        const newMessage = {
-            username: username,
-            text: messageText
-        };
-
-        messages.push(newMessage); // Добавляем сообщение в массив
-        displayMessages(); // Обновляем отображение
-
-        messageInput.value = ""; // Очищаем поле ввода
+sendButton.addEventListener('click', () => {
+    const messageText = messageInput.value.trim();
+    if (messageText !== "" && username) {
+        socket.emit('chat message', messageText); // Send message
+        messageInput.value = "";
     }
 });
 
-
-// Отображаем сообщения при загрузке страницы (если есть)
-displayMessages();
-
-
-// Отправка данных в телеграм
+//Telegram theme adaptation
 telegram.onEvent('themeChanged', function(){
-	document.body.style.backgroundColor = telegram.themeParams.bg_color;
+    document.body.style.backgroundColor = telegram.themeParams.bg_color;
 });
 
 telegram.BackButton.onClick(() => {
