@@ -9,11 +9,18 @@ let username = null; // Имя пользователя
 // Массив для хранения сообщений (локально)
 let messages = [];
 
+// Внимание: Это небезопасно! Не используйте в реальном приложении!
+const moderators = ["moderator1"]; // Замените на реальные имена пользователей Telegram
+
+function isModerator(username) {
+    return moderators.includes(username);
+}
+
 // Функция для отображения сообщений
 function displayMessages() {
     chatMessagesDiv.innerHTML = ""; // Очищаем контейнер
 
-    messages.forEach(message => {
+    messages.forEach((message, index) => {
         const messageElement = document.createElement("p");
         const usernameSpan = document.createElement("span");
         usernameSpan.classList.add("username");
@@ -22,9 +29,25 @@ function displayMessages() {
         messageElement.appendChild(usernameSpan);
         messageElement.append(" " + message.text);
 
+        // Добавляем кнопку "Удалить" только для модераторов
+        if (isModerator(username)) {
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "Удалить";
+            deleteButton.classList.add("delete-button");
+            deleteButton.addEventListener("click", () => {
+                deleteMessage(index);
+            });
+            messageElement.appendChild(deleteButton);
+        }
+
         chatMessagesDiv.appendChild(messageElement);
         chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
     });
+}
+
+function deleteMessage(index) {
+    messages.splice(index, 1); // Удаляем сообщение из массива
+    displayMessages(); // Обновляем отображение
 }
 
 // Получаем имя пользователя из Telegram Web App API
