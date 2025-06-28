@@ -1,0 +1,65 @@
+body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0; /* Светлый фон */
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 10px;
+}
+
+.chat-messages {
+    flex-grow: 1;
+    overflow-y: auto; /* Добавляем прокрутку, если сообщений много */
+    padding: 10px;
+    background-color: #fff; /* Белый фон для сообщений */
+    border-radius: 5px;
+}
+
+.chat-messages p {
+    margin-bottom: 5px;
+    padding: 8px 12px;
+    border-radius: 15px;
+    display: inline-block;
+    clear: both; /* Чтобы сообщения не перекрывались */
+    max-width: 70%; /* Ограничиваем ширину сообщения */
+    word-break: break-word; /* Перенос слов */
+}
+
+.chat-messages p.user-message {
+    background-color: #DCF8C6; /* Зеленый для сообщений пользователя */
+    float: right; /* Сообщения пользователя справа */
+}
+
+.chat-messages p.other-message {
+    background-color: #E5E5EA; /* Серый для сообщений других */
+    float: left; /* Сообщения других слева */
+}
+
+.input-area {
+    display: flex;
+    padding: 10px;
+    background-color: #eee; /* Светло-серый фон для поля ввода */
+    border-radius: 5px;
+}
+
+.input-area input {
+    flex-grow: 1;
+    padding: 8px;
+    border: none;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+.input-area button {
+    padding: 8px 15px;
+    background-color: #0088cc; /* Синий цвет */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
