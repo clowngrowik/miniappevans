@@ -8,17 +8,26 @@
 </head>
 <body>
     <div class="container">
-        <div id="chat-messages" class="chat-messages">
-            <!-- Здесь будут отображаться сообщения -->
+        <div id="login-register" class="login-register">
+            <input type="text" id="username" placeholder="Username">
+            <input type="password" id="password" placeholder="Password">
+            <button id="register-btn">Register</button>
+            <button id="login-btn">Login</button>
         </div>
 
-        <div class="input-area">
-            <input type="text" id="message-input" placeholder="Напишите сообщение...">
-            <button id="send-button">Отправить</button>
+        <div id="chat-area" class="chat-area" style="display: none;">
+            <div id="chat-messages" class="chat-messages">
+                <!-- Messages -->
+            </div>
+            <div class="input-area">
+                <input type="text" id="message-input" placeholder="Write your message...">
+                <button id="send-button">Send</button>
+            </div>
         </div>
     </div>
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZofHtpKOkzXlhGNmjY6iY7F4uO+nzJ5/PGEv0djkybL8BArGUjx9Bb" crossorigin="anonymous"></script>
     <script src="script.js"></script>
 </body>
 </html>
