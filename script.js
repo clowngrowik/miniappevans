@@ -16,7 +16,12 @@ function displayMessages() {
 
     messages.forEach(message => {
         const messageElement = document.createElement("p");
-        messageElement.textContent = `${message.username}: ${message.text}`;
+        const usernameSpan = document.createElement("span");
+        usernameSpan.classList.add("username");
+        usernameSpan.textContent = message.username + ":";
+
+        messageElement.appendChild(usernameSpan);
+        messageElement.append(" " + message.text)
 
         if (message.username === username) {
             messageElement.classList.add("user-message");
