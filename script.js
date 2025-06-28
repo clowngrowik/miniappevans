@@ -4,64 +4,39 @@ telegram.ready();
 const socket = io('http://localhost:3000'); // Replace with your server address
 let username = null;
 
-// Login/Register Elements
-const loginRegisterDiv = document.getElementById('login-register');
+//  Элементы для отображения логина
+const loginArea = document.getElementById('login-area');
+const usernameDisplay = document.getElementById('username-display');
 const chatAreaDiv = document.getElementById('chat-area');
-const usernameInput = document.getElementById('username');
-const passwordInput = document.getElementById('password');
-const registerBtn = document.getElementById('register-btn');
-const loginBtn = document.getElementById('login-btn');
 
 // Chat Elements
 const chatMessagesDiv = document.getElementById('chat-messages');
 const messageInput = document.getElementById('message-input');
 const sendButton = document.getElementById('send-button');
 
-// Event Listeners for Login/Register
-registerBtn.addEventListener('click', () => {
-  socket.emit('register', { username: usernameInput.value, password: passwordInput.value });
-});
-
-loginBtn.addEventListener('click', () => {
-  socket.emit('login', { username: usernameInput.value, password: passwordInput.value });
-});
+// Автоматический вход после получения имени пользователя из Telegram
+function attemptLogin(username) {
+    socket.emit('login', { username: username }); // Отправляем запрос на вход только с username
+}
 
 // Socket Event Listeners
 socket.on('connect', () => {
     console.log('Connected to server');
 });
 
-socket.on('registerSuccess', (message) => {
-    console.log(message);
-    alert('Registration Successful. You can now log in.'); // Replace with better UI
-});
-
-socket.on('registerError', (error) => {
-    console.error(error);
-    alert('Registration Failed: ' + error); // Replace with better UI
-});
-
 socket.on('loginSuccess', (data) => {
     console.log('Login success', data);
     username = data.user.username; // Store username
-    loginRegisterDiv.style.display = 'none'; // Hide login form
+    loginArea.style.display = 'block';
+    usernameDisplay.textContent = username;
     chatAreaDiv.style.display = 'flex'; // Show chat area
 
-    // Fetch previous messages after login success
-    //loadPreviousMessages(); // Call function to load messages after login
+    socket.on('chat message', (message) => {
+        displayNewMessage(message);
+    });
+    loadPreviousMessages();
 });
 
-// Listen for previous messages
-socket.on('loadMessages', (messages) => {
-    messages.forEach(message => displayNewMessage(message));
-});
-
-socket.on('loginError', (error) => {
-    console.error(error);
-    alert('Login Failed: ' + error); // Replace with better UI
-});
-
-// Function to append the message to chat window
 function displayNewMessage(message) {
     const messageElement = document.createElement("p");
     const usernameSpan = document.createElement("span");
@@ -73,6 +48,29 @@ function displayNewMessage(message) {
 
     chatMessagesDiv.appendChild(messageElement);
     chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
+}
+
+// Function to load previous messages
+function loadPreviousMessages() {
+    //Clear messages
+    chatMessagesDiv.innerHTML = "";
+    // Add new messages
+    socket.on('loadMessages', (messages) => {
+        messages.forEach(message => displayNewMessage(message));
+    });
+}
+
+socket.on('loginError', (error) => {
+    console.error(error);
+    alert('Login Failed: ' + error); // Replace with better UI
+});
+
+// Load previous messages
+function loadPreviousMessages() {
+    chatMessagesDiv.innerHTML = "";
+    socket.on('loadMessages', (messages) => {
+        messages.forEach(message => displayNewMessage(message));
+    });
 }
 
 socket.on('chat message', (message) => {
@@ -95,3 +93,13 @@ telegram.onEvent('themeChanged', function(){
 telegram.BackButton.onClick(() => {
     telegram.close();
 });
+
+//Получаем имя из телеграмма
+if (telegram.initDataUnsafe && telegram.initDataUnsafe.user) {
+    username = telegram.initDataUnsafe.user.username || "Неизвестный";
+    console.log("Имя пользователя:", username);
+    attemptLogin(username); // Attempt login immediately
+} else {
+    username = "Аноним";
+    console.warn("Не удалось получить имя пользователя из Telegram Web App API.");
+}
