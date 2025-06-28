@@ -10,7 +10,7 @@ let username = null; // Имя пользователя
 let messages = [];
 
 // Внимание: Это небезопасно! Не используйте в реальном приложении!
-const moderators = ["moderator1"]; // Замените на реальные имена пользователей Telegram
+const moderators = ["maxgrowik"]; // Замените на реальные имена пользователей Telegram
 
 function isModerator(username) {
     return moderators.includes(username);
