@@ -6,7 +6,7 @@ const messageInput = document.getElementById('message-input');
 const sendButton = document.getElementById('send-button');
 let username = null;
 
-const socket = io('http://localhost:3000'); // Replace with your server address
+const socket = io('http://193.108.114.72:3000'); // Replace with your server address
 
 // Обработка подключения к серверу
 socket.on('connect', () => {
